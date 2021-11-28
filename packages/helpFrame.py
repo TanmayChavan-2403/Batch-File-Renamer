@@ -31,7 +31,7 @@ class HelpFrame:
 
 		for i in range(len(textValue)):
 			helpBtn= Button(self.helpRootWindow, text=textValue[i], bg='#222222',
-			fg='white', font=('Flux Regular', 12, 'bold'), activebackground='tomato', bd=0, relief='solid', 
+			fg='tomato', font=('Flux Regular', 12, 'bold'), activebackground='tomato', bd=0, relief='solid', 
 			activeforeground='white', cursor='hand2', highlightthickness=1, highlightbackground='red')
 			helpBtn.grid(row=i, column=0, sticky='ew', pady=(5, 5))
 
@@ -64,7 +64,7 @@ class HelpFrame:
 
 
 		# Main frame to display all the help required for renaming process
-		renameFrameHelp = LabelFrame(self.helpWindow, text='Help For Rename Frame', height=50, fg='white',bg='#222222',
+		renameFrameHelp = LabelFrame(self.helpWindow, text='Help For Rename Frame', height=50, fg='tomato',bg='#222222',
 			font=('Flux Regular', 20, 'bold'), labelanchor='n')
 		renameFrameHelp.grid(row=0, column=0, sticky='ew')
 		Grid.columnconfigure(renameFrameHelp, 0, weight=1)

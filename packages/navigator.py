@@ -62,9 +62,9 @@ class Navigator(Validator):
 
 
         self.selectButton = Button(BF_Frame, text='Select current folder',
-        bg='#444444', bd='0', relief='solid', activebackground='#e74c3c', fg='white', font=('Flux Regular', 10, 'bold'),
+        bg='tomato', bd='0', relief='solid', activebackground='#e74c3c', fg='white', font=('Flux Regular', 10, 'bold'),
         highlightbackground='#444444', activeforeground='white',cursor='hand2' ,command= self.selectCurrentFolder)
-        self.selectButton.grid(column =3 , row = 0, padx=3)
+        self.selectButton.grid(column =3 , row = 0, padx=3, ipadx=5, ipady=2)
 
 
 
@@ -147,7 +147,7 @@ class Navigator(Validator):
 
     def selectCurrentFolder(self):
         currPath = self.path_history[-1]
-        if currPath == '/media/hackytech/':
+        if currPath == 'ROOT':
             messagebox.showinfo(title='MESSAGE', message="Local disks can't be selected ")
         else:
             lst = os.listdir(currPath)
@@ -158,6 +158,7 @@ class Navigator(Validator):
                 if resp:
                     self.win.destroy()
                     self.renameFrameOBJ.updateFields(currPath)
+                    # self.renameFrameOBJ is itself object of RenameFrame class definied in constructor of Navigator class
 
 
     def notAFile(self, currPath):
@@ -177,7 +178,7 @@ class Navigator(Validator):
         # this if condition checks that this fuction was trigered by Double clikc using mouse OR by pasting path 
         # in path entry and hitting enter and then validating it. So if it gives us indexError means the 
         # User pasted the path and then tried going to that path
-        if action == "":
+        if action == "": 
             try:
                 currPath = self.path_list[self.listBox.curselection()[0]]
             except IndexError:
@@ -192,17 +193,33 @@ class Navigator(Validator):
                 self.path_history.append(currPath)
         else:
             # Checking if this function was triggered by forward or backward button
+
             if action == 'backward':
-                #  As we are going back so we will remove the last entry of historyPath and add to the forward path list
                 currPath = self.path_history.pop(-1)
                 self.forward_path.append(currPath)
 
                 currPath = currPath.split('/')
-                if currPath.pop(-1) == "":
-                    currPath.pop(-1)
+                while currPath.pop(-1) == "":
+                    pass
                 currPath = '/'.join(currPath)
+                if len(self.path_history) == 1 and self.path_history[0] == 'ROOT':
+                    self.innitiate()
+                    self.currpathLabel.delete(0, END) # Deleting all the path entrie
+
+                    # Configure the back and forward button based on forward_path and path_history list
+                    if (len(self.forward_path) > 0):
+                        self.forwardButton.configure(state = 'normal', cursor='hand2')
+                    else:
+                        self.forwardButton.configure(state = 'disabled', cursor='X_cursor')
+                    if (len(self.path_history) > 1):
+                        self.backButton.configure(state = 'normal', cursor='hand2')
+                    else:
+                        self.backButton.configure(state = 'disabled', cursor='X_cursor')
+                    return
             else:
                 currPath = self.forward_path.pop(-1)
+                if currPath == "":
+                    currPath = self.forward_path.pop(-1)
                 self.path_history.append(currPath)
 
 
@@ -211,7 +228,7 @@ class Navigator(Validator):
         self.currpathLabel.insert(0, self.path_history[-1])
 
 
-        # Configure the back and forward button based on forward_path and backward_path list
+        # Configure the back and forward button based on forward_path and path_history list
         if (len(self.forward_path) > 0):
             self.forwardButton.configure(state = 'normal', cursor='hand2')
         else:
@@ -220,12 +237,6 @@ class Navigator(Validator):
             self.backButton.configure(state = 'normal', cursor='hand2')
         else:
             self.backButton.configure(state = 'disabled', cursor='X_cursor')
-
-        # After removing the last entry, now checking is the length of historyPath 1, if yes then we have to invoke
-        # innitiate function again and return 
-        if len(self.path_history) == 1:
-            self.innitiate()
-            return
 
         try:
             folders = os.listdir(currPath)
@@ -242,20 +253,25 @@ class Navigator(Validator):
         except NotADirectoryError:
             messagebox.showerror('ERROR!', "You can't open a file, please select a folder. In future we are planning to add image viewer \u263A")
 
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+            if currPath == "": # Temporary fix for FileNotFoundError at specified path ""
+                return
             messagebox.showerror('ERROR!', 'This directory is not present in your system')
         except PermissionError:
             messagebox.showerror('ERROR!', "You don't have permission to open this directory")
 
 
     def innitiateNavigationSystem(self):
-        browseWin = Toplevel()
+        browseWin = Toplevel(self.win)
+        
+        # browseWin.attributes('-topmost', True)
 
         # Creating an instance of Navigator class
         navigate = Navigator(browseWin, self)
 
         # Invoking innitiate funtion of Navigator class
         navigate.innitiate()
+
         browseWin.mainloop()
 
 # if __name__ == '__main__':

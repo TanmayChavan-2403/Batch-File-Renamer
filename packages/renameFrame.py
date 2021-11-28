@@ -194,21 +194,21 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 		self.Replacor.grid(row=0, column=1, padx=5, sticky='ew' )
 		self.Replacor.insert(0, 'Check help to see how to use Custom Name feature ')
 
-		self.addedNamesField = Text(self.customNameFrame, height=3)
+		self.addedNamesField = Text(self.customNameFrame, height=5)
 		self.addedNamesField.insert(END, 'Added custom names will be displayed here\n')
 		self.addedNamesField.bind("<Button-1>", lambda e: "break")
 		self.addedNamesField.bind("<Key>", lambda e: "break")
 		self.addedNamesField.grid(row=1, column=0, columnspan=4, pady=(10, 10),padx=(10, 10), ipady=5, ipadx=5, sticky='ew' )
 		
 		self.valueAdder = Button(self.customNameFrame, text='Add Field', bd = 0, relief='solid',
-			cursor='hand2',bg='#222222', fg='white', highlightthickness=1, highlightbackground='#0892d0',
+			cursor='hand2',bg='#0892d0', fg='white', highlightthickness=1, highlightbackground='#0892d0',
 			activebackground='#0892d0', activeforeground='white', command=partial(self.handleCustomName, 'add'))
-		self.valueAdder.grid(row=0, column=2, pady=(5, 10), padx=5)
+		self.valueAdder.grid(row=0, column=2, pady=(5, 10), padx=10, ipadx=10, ipady=2)
 
 		self.valueRemover = Button(self.customNameFrame, text='Remove Field', bd = 0, relief='solid',
-			cursor='hand2',bg='#222222', fg='white', highlightthickness=1, highlightbackground='#0892d0',
+			cursor='hand2',bg='#0892d0', fg='white', highlightthickness=1, highlightbackground='#0892d0',
 			activebackground='#0892d0', activeforeground='white', command=partial(self.handleCustomName, 'remove'))
-		self.valueRemover.grid(row=0, column=3, pady=(5, 10), padx=5)
+		self.valueRemover.grid(row=0, column=3, pady=(5, 10), padx=5, ipadx=10, ipady=2)
 
 		# Sixth Row end
 
@@ -226,7 +226,7 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 		self.customPrefixInput.grid(row = 0, column=0, sticky='ew', padx=(5, 5), pady=(5, 5))
 
 		self.customPrefixSaveButton = Button(self.customPrefixFrame, text='Add Prefix', bd = 0, relief='solid',
-			cursor='hand2',bg='#222222', fg='white', highlightthickness=1, highlightbackground='#0892d0',
+			cursor='hand2',bg='#0892d0', fg='white', highlightthickness=1, highlightbackground='#0892d0',
 			activebackground='#0892d0', activeforeground='white')
 		self.customPrefixSaveButton.grid(row = 0, column=1, padx=(5, 5), pady=(5, 5))
 		
