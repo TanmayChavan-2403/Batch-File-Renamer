@@ -1,5 +1,5 @@
 
-# Batch File Renamer 1.0 [LINUX ( Debian based )]
+# Batch File Renamer 1.0 [LINUX]
 
 ![Logo](https://i.imgur.com/YSk7Dm5.jpg)
 
@@ -7,7 +7,7 @@ I worked on this project to get handson experience with tkinter module and worki
 
 ## Downloads
 
-[![linux](https://img.shields.io/badge/linux-64bit_Deb-000?style=for-the-badge&logo=linux&logoColor=white)](https://downgit.github.io/#/home?url=https://github.com/TanmayChavan-2403/Direct-Links/blob/main/B%20Renamer%20LINUX.zip)
+[![linux](https://img.shields.io/badge/linux-64bit_Deb-000?style=for-the-badge&logo=linux&logoColor=white)](https://drive.google.com/uc?export=download&id=1qxMsJlg1PdhmjWMqqEGWP9bTpE1UlrBd)
 
 
 ## Installation
