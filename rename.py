@@ -1,3 +1,4 @@
+# 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
 from functools import partial
 from configparser import ConfigParser
 from tkinter import *
@@ -20,7 +21,7 @@ class Rename():
 			renameRootWindow.attributes('-zoomed', True)
 		else:
 			renameRootWindow.state('zoomed')
-		renameRootWindow.title('Rename 0.1')
+		renameRootWindow.title('Rename 1.0')
 
 
 	def initializeWindow(self):

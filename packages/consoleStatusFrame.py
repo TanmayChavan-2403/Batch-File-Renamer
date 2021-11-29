@@ -35,6 +35,8 @@ class ConsoleStatusFrame():
 		self.consoleFrame.grid_propagate(0)
 		Grid.rowconfigure(self.consoleFrame, 0, weight=1)
 		Grid.columnconfigure(self.consoleFrame, 0, weight=1)
+		Grid.columnconfigure(self.consoleFrame, 1, weight=0)
+
 
 		self.statusList = Listbox(self.consoleFrame, bg='#222222', fg='white', font=('Flux Regular', 10, 'bold'), 
 			bd = 0, highlightbackground='#222222', relief='solid')
@@ -42,10 +44,20 @@ class ConsoleStatusFrame():
 
 		self.scrollBar = Scrollbar(self.consoleFrame, orient="horizontal", bg='grey', activerelief='solid',
 			bd=0, cursor='hand2', troughcolor='#222222', relief='solid')
-		self.scrollBar.grid(row=1, column=0, sticky='ew')
+		self.scrollBar.grid(row=2, column=0, sticky='ew')
 
+		# Configuring scrollbar for statusList
 		self.statusList.configure(xscrollcommand = self.scrollBar.set)
 		self.scrollBar.configure(command=self.statusList.xview)
+
+		self.clearConsoleButton = Button(self.consoleFrame, text='Clear Console', activebackground='tomato', activeforeground='white', bd=0, 
+			relief='solid', bg='#0892d0',highlightthickness = 0, fg='white', font=('Flux Regular', 10, 'bold'),
+			cursor='hand2', command= self.clearConsole)
+		self.clearConsoleButton.grid(row=1, column=0, sticky='ew')
+
+		self.deleteHistoryButton = Button(self.consoleFrame, text='Delete Entire History', activebackground='tomato', activeforeground='white', bd=0, 
+			relief='solid', bg='#0892d0',highlightthickness = 0, fg='white', font=('Flux Regular', 10, 'bold'),cursor='hand2',
+			command=self.deleteHistory)
 
 
 	def saveLogsToHistory(self):
@@ -61,3 +73,26 @@ class ConsoleStatusFrame():
 			self.statusList.delete(0, END)
 		else:
 			self.statusList.insert(END, value)
+
+
+	def clearConsole(self):
+		# Clearing the entire listbox
+		self.statusList.delete(0, END)
+
+		# If remove history button was grided to screen then we will remove it too
+		self.deleteHistoryButton.grid_forget()
+
+		# Reconfiguring the column of consoleFrame
+		Grid.columnconfigure(self.consoleFrame, 1, weight=0)
+
+		# Re-gridding the listbox to change the remove the columnspan value
+		self.statusList.grid(row=0, column = 0, padx=(10, 10), pady=(10, 10), sticky='nsew')
+
+
+	def deleteHistory(self):
+		if messagebox.askyesno('Confirmation Window', 'This action will delete all the history recorded so far, do you still want to proceed futher ?'):
+			with open('./packages/history.txt', 'r+') as file:
+				file.truncate(0)
+
+			# Running this function again so that it resets all the widgets and clears console
+			self.clearConsole()

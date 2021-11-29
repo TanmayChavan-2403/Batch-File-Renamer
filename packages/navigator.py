@@ -15,12 +15,13 @@ class Navigator(Validator):
     def __init__(self, win, renameFrameOBJ):
         self.win = win
         self.renameFrameOBJ = renameFrameOBJ
+        self.child_window = None
+        self.currentSelectedValue = 0
         
         # Configuring windows
-        if sys.platform == 'linux':
-            win.attributes('-zoom', True)
-        else:
-            win.state('zoomed')
+        win.attributes('-zoom', True)
+        
+        self.completedKeyInteractionEntries = []
             
         win.title('Dialog Box')
         win.grid_columnconfigure(0,weight=1)
@@ -90,10 +91,44 @@ class Navigator(Validator):
         self.currpathLabel.bind('<KP_Enter>', self.displayFiles)
         win.bind('<Key>', self.triggerBackButton)
 
+        # Binding keyboard event to window
+
 
     def triggerBackButton(self, event):
+        # Clearing all the selections if we are going to use interactive keyboard feature, so that if will 
+        # re select a new one instead of selecting the previous selection as well as the current selection
+        self.listBox.selection_clear(0, END)
+
         if event.char == '':
             self.backButton.invoke()
+        elif event.keysym == 'Up':
+            print(self.currentSelectedValue)
+            if self.currentSelectedValue:
+                self.currentSelectedValue -= 1
+                self.listBox.selection_set(self.currentSelectedValue, self.currentSelectedValue)
+            else:
+                self.currentSelectedValue = 1
+                self.listBox.selection_set(0, 0)
+        elif event.keysym == 'Down':
+            if self.currentSelectedValue:
+                self.currentSelectedValue += 1
+                self.listBox.selection_set(self.currentSelectedValue, self.currentSelectedValue)
+            else:
+                self.currentSelectedValue = 1
+                self.listBox.selection_set(0, 0)
+        else:
+            if event.char in string.ascii_lowercase:
+                if self.path_history[-1] == 'ROOT':
+                    return
+                files = os.listdir(self.path_history[-1])
+                for idx in range(len(files)):
+                    if files[idx][0].lower() == event.char and files[idx] not in self.completedKeyInteractionEntries:
+                        self.currentSelectedValue = idx
+                        self.listBox.see(idx)
+                        self.listBox.selection_set(idx, idx)
+                        self.completedKeyInteractionEntries.append(files[idx])
+                        break
+
 
 
     def innitiate(self):
@@ -127,16 +162,13 @@ class Navigator(Validator):
                 self.initiateAutoDiskSave()
 
     def initiateAutoDiskSave(self):
-        print(self.system)
         self.config_object['WINDOWS_LOCAL_DISKS'] = {}
         for drive in list(string.ascii_uppercase):
             try:
                 os.listdir(drive + ':/')
-                print(drive)
                 self.config_object['WINDOWS_LOCAL_DISKS']['Local Disk ' + drive] = drive + ':/'
                 
             except Exception as e:
-                print(e)
                 pass
 
         with open('./packages/config.ini', 'w') as configFile:
@@ -158,6 +190,7 @@ class Navigator(Validator):
                 if resp:
                     self.win.destroy()
                     self.renameFrameOBJ.updateFields(currPath)
+                    # self.renameFrameOBJ is itself object of RenameFrame class definied in constructor of Navigator class
 
 
     def notAFile(self, currPath):
@@ -249,24 +282,16 @@ class Navigator(Validator):
 
 
     def innitiateNavigationSystem(self):
-        browseWin = Toplevel()
+        self.browseWin = Toplevel(self.win)
 
         # Creating an instance of Navigator class
-        navigate = Navigator(browseWin, self)
+        navigate = Navigator(self.browseWin, self)
+
+        self.child_window = True
 
         # Invoking innitiate funtion of Navigator class
         navigate.innitiate()
-        browseWin.mainloop()
-
-# if __name__ == '__main__':
-#     win = ThemedTk(theme='adapta')
-    
-#     nvg = Navigator(win)
-
-#     nvg.innitiate()
-#     win.mainloop()
-
-
+        self.browseWin.mainloop()
 
 
 # Features

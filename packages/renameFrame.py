@@ -21,6 +21,7 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 		# This line is use to invoke the init method of ConsoleStatusFrame
 		ConsoleStatusFrame.__init__(self, win)
 		MenuFrame.__init__(self, win)
+		self.navigateWindow = None
 
 		self.win = win
 		win.update_idletasks() 
@@ -318,7 +319,15 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 
 
 	def startBrowsing(self):
-		self.innitiateNavigationSystem()
+		if not self.navigateWindow:
+			self.navigateWindow = True
+			self.innitiateNavigationSystem()
+		else:
+			try:
+				self.browseWin.lift()
+			except Exception as e:
+				self.innitiateNavigationSystem()
+
 
 	def changeRenameAction(self, action):
 		self.renameAction = action
@@ -362,7 +371,8 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 				prefixVal = 'file'
 				num = 1
 				for file in file_list:
-					if os.path.isfile(RenameFrame.browsed_path + '/' + file):
+					if os.path.isfile(RenameFrame.browsed_path + '/' + file) and file not in self.ignoreFileWhileRenaming:
+						print(file)
 						extension = file.split('.')[-1]
 						os.rename(RenameFrame.browsed_path + '/' + file, RenameFrame.browsed_path + '/' + prefixVal + ' ' + str(num) + '.' + extension)
 						newFilename = prefixVal + ' ' + str(num) + '.' + extension
@@ -387,7 +397,7 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 						return 
 				num = 1
 				for file in file_list:
-					if os.path.isfile(RenameFrame.browsed_path + '/' + file):
+					if os.path.isfile(RenameFrame.browsed_path + '/' + file) and file not in self.ignoreFileWhileRenaming:
 						extension = file.split('.')[-1]
 						os.rename(RenameFrame.browsed_path + '/' + file, RenameFrame.browsed_path + '/' + prefixVal + ' ' + str(num) + '.' + extension)
 						newFilename = prefixVal + ' ' + str(num) + '.' + extension
@@ -405,7 +415,7 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 			elif self.renameAction == 'CustomName':
 				print(self.customNameList)
 				for file in file_list:
-					if os.path.isfile(RenameFrame.browsed_path + '/' + file):
+					if os.path.isfile(RenameFrame.browsed_path + '/' + file) and file not in self.ignoreFileWhileRenaming:
 						newFilename = file
 						for key in self.customNameList:
 							newFilename = newFilename.replace(key, self.customNameList[key])
@@ -421,6 +431,29 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 			
 
 	def logHistoryToConsole(self):
+
+
+		# Before logging all the logs to console we check that does file contains any content else we 
+		# just return from this function before proceeding futher
+		if os.path.getsize('./packages/history.txt') == 0:
+			messagebox.showinfo('Ackn', "You don't have any history to display")
+			return
+
+
+		# Configuring the statusList in consolse so that we can prevent halving of status screen
+		self.statusList.grid(row=0, column = 0,columnspan=2, padx=(10, 10), pady=(10, 10), sticky='nsew')
+
+		# Re-configuring the scrollbar attached to consoleFrame to expand 
+		self.scrollBar.grid(row=2, column=0, columnspan=2 ,sticky='ew')
+
+		# Configuring column 1's weight to 1 of consoleFrame to add delete history button, 
+		Grid.columnconfigure(self.consoleFrame, 1, weight=1)
+
+		# Adding delete history button to consoleFrame
+		self.deleteHistoryButton.grid(row=1, column=1, padx=(5, 5), pady=(5, 5) ,sticky = 'ew')
+
+
+		# Logging history to console
 		self.logToConsole('', 'delete')
 		with open('./packages/history.txt', 'r') as file:
 			for line in file:
@@ -429,6 +462,8 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 
 	def showHelp(self):
 		self.initiateHelpWindow()
+		
+		
 		
 	def rightClickMenu(self, event):
 
@@ -439,9 +474,7 @@ class RenameFrame(Navigator, ConsoleStatusFrame, MenuFrame, HelpFrame):
 		# proceed with execution
 		selectionIndex = self.fileList.curselection()[0]
 		selectionText = self.fileList.get(selectionIndex, selectionIndex)[0]
-		print(selectionIndex, selectionText)
 
-		print(self.ignoreFileWhileRenaming)
 		# Before creating menu we will clear the menu items we inserted earlier so that there won't be 
 		# any memory leack
 		self.rightClickMenu.delete(0, END)
