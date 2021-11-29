@@ -15,6 +15,8 @@ class Navigator(Validator):
     def __init__(self, win, renameFrameOBJ):
         self.win = win
         self.renameFrameOBJ = renameFrameOBJ
+        self.completedKeyInteractionEntries = []
+        self.currentSelectedValue = 0
         
         # Configuring windows
         if sys.platform == 'linux':
@@ -92,8 +94,39 @@ class Navigator(Validator):
 
 
     def triggerBackButton(self, event):
+        # Clearing all the selections if we are going to use interactive keyboard feature, so that if will 
+        # re select a new one instead of selecting the previous selection as well as the current selection
+        self.listBox.selection_clear(0, END)
+
         if event.char == '':
             self.backButton.invoke()
+        elif event.keysym == 'Up':
+            print(self.currentSelectedValue)
+            if self.currentSelectedValue:
+                self.currentSelectedValue -= 1
+                self.listBox.selection_set(self.currentSelectedValue, self.currentSelectedValue)
+            else:
+                self.currentSelectedValue = 1
+                self.listBox.selection_set(0, 0)
+        elif event.keysym == 'Down':
+            if self.currentSelectedValue:
+                self.currentSelectedValue += 1
+                self.listBox.selection_set(self.currentSelectedValue, self.currentSelectedValue)
+            else:
+                self.currentSelectedValue = 1
+                self.listBox.selection_set(0, 0)
+        else:
+            if event.char in string.ascii_lowercase:
+                if self.path_history[-1] == 'ROOT':
+                    return
+                files = os.listdir(self.path_history[-1])
+                for idx in range(len(files)):
+                    if files[idx][0].lower() == event.char and files[idx] not in self.completedKeyInteractionEntries:
+                        self.currentSelectedValue = idx
+                        self.listBox.see(idx)
+                        self.listBox.selection_set(idx, idx)
+                        self.completedKeyInteractionEntries.append(files[idx])
+                        break
 
 
     def innitiate(self):
@@ -171,6 +204,8 @@ class Navigator(Validator):
 
     def displayFiles(self, clickEvent, action=''):
         global win
+        # Reinitializing self.completedKeyInteractionEntries for this current path
+        self.completedKeyInteractionEntries = []
 
         # Reconfiguring it to display file names at left
         self.listBox.configure(justify='left')
@@ -262,27 +297,15 @@ class Navigator(Validator):
 
 
     def innitiateNavigationSystem(self):
-        browseWin = Toplevel(self.win)
-        
+        self.browseWin = Toplevel(self.win)
         # browseWin.attributes('-topmost', True)
 
         # Creating an instance of Navigator class
-        navigate = Navigator(browseWin, self)
+        self.navigate = Navigator(self.browseWin, self)
 
         # Invoking innitiate funtion of Navigator class
-        navigate.innitiate()
-
-        browseWin.mainloop()
-
-# if __name__ == '__main__':
-#     win = ThemedTk(theme='adapta')
-    
-#     nvg = Navigator(win)
-
-#     nvg.innitiate()
-#     win.mainloop()
-
-
+        self.navigate.innitiate()
+        self.browseWin.mainloop()
 
 
 # Features
