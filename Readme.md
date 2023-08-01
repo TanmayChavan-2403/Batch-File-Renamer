@@ -7,8 +7,8 @@ I worked on this project to get handson experience with tkinter module and worki
 
 ## Downloads
 
-[![linux](https://img.shields.io/badge/linux-64bit_Deb-b00434?style=for-the-badge&logo=linux&logoColor=white)](https://drive.google.com/uc?export=download&id=1qxMsJlg1PdhmjWMqqEGWP9bTpE1UlrBd)
-[![linux](https://img.shields.io/badge/linux-64bit_Redhat-b00434?style=for-the-badge&logo=linux&logoColor=white)](https://drive.google.com/uc?export=download&id=1qxMsJlg1PdhmjWMqqEGWP9bTpE1UlrBd)
+[![linux](https://img.shields.io/badge/linux-64bit_Deb-b00434?style=for-the-badge&logo=linux&logoColor=white)](https://drive.google.com/uc?export=download&id=1jt1TUOPSi1KWmRqGJiBZJACZYIt5xPpv)
+[![linux](https://img.shields.io/badge/linux-64bit_Redhat-b00434?style=for-the-badge&logo=linux&logoColor=white)](https://drive.google.com/uc?export=download&id=1jt1TUOPSi1KWmRqGJiBZJACZYIt5xPpv)
 
 
 [![Windows](https://img.shields.io/badge/Windows-64bit-0073cf?style=for-the-badge&logo=windows&logoColor=white)](https://drive.google.com/uc?export=download&id=1lda2S1acWRtNjaNmuy__HKa1mOlgMdK-)
@@ -30,6 +30,12 @@ and then run python file
 ```bash
   python rename.py
 ```
+
+## UI Screenshots
+
+Initial Screen
+![SS1](https://i.imgur.com/j7C1bQz.png)
+
 
 ## Features
 
